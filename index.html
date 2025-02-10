@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEMNAKER 2025</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 60%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        #loading {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daftar File dalam Folder GitHub</h1>
+    <p>Berikut adalah daftar file yang terdapat dalam folder repository GitHub:</p>
+
+    <p id="loading">Memuat data...</p>
+    <table id="fileTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>Nama File</th>
+                <th>Tipe</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody id="fileTableBody"></tbody>
+    </table>
+
+    <script>
+        // Tentukan repository dan path folder di sini
+        const repo = "ihsan-fauzi/kemnaker-2025"; // Format: owner/repo
+        const path = ""; // Path folder dalam repository
+
+        async function fetchFilesFromGitHub() {
+            const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+            const loadingIndicator = document.getElementById("loading");
+            const fileTable = document.getElementById("fileTable");
+            const fileTableBody = document.getElementById("fileTableBody");
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error("Gagal mengambil data. Periksa URL atau folder yang dimasukkan.");
+                }
+
+                const files = await response.json();
+
+                // Bersihkan tabel
+                fileTableBody.innerHTML = "";
+
+                // Tambahkan file ke tabel
+                files.forEach(file => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${file.name}</td>
+                        <td>${file.type}</td>
+                        <td><a href="https://ihsan-fauzi.github.io/kemnaker-2025/${file.name}" target="_blank">Lihat</a></td>
+                    `;
+                    fileTableBody.appendChild(row);
+                });
+
+                // Tampilkan tabel
+                fileTable.style.display = "table";
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                // Sembunyikan indikator loading
+                loadingIndicator.style.display = "none";
+            }
+        }
+
+        // Panggil fungsi saat halaman dimuat
+        document.addEventListener("DOMContentLoaded", fetchFilesFromGitHub);
+    </script>
+</body>
+</html>
